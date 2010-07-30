@@ -1,7 +1,7 @@
 Summary:	GPicView: Picture viewer of LXDE
 Name:		gpicview
 Version:	0.2.1
-Release:	0.1
+Release:	1
 License:	GPL v2, LGPL
 Group:		X11/Applications
 Source0:	https://downloads.sourceforge.net/project/lxde/GPicView%20%28image%20Viewer%29/GPicView%20%{version}/%{name}-%{version}.tar.gz
@@ -38,6 +38,9 @@ lightening fast startup and intuitive interface.
 rm -rf $RPM_BUILD_ROOT
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
+
+# missing in glibc
+rm -rf $RPM_BUILD_ROOT/usr/share/locale/ur_PK
 
 %find_lang %{name}
 
