@@ -40,7 +40,7 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT
 
 # missing in glibc
-rm -rf $RPM_BUILD_ROOT/usr/share/locale/ur_PK
+rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/ur_PK
 
 %find_lang %{name}
 
