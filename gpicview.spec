@@ -9,7 +9,13 @@ Source0:	https://downloads.sourceforge.net/project/lxde/GPicView%20%28image%20Vi
 URL:		http://wiki.lxde.org/en/GPicView
 BuildRequires:	autoconf
 BuildRequires:	automake
+BuildRequires:	gettext-devel
+BuildRequires:	glib2-devel
+BuildRequires:	gtk+2-devel
+BuildRequires:	intltool
+BuildRequires:	libjpeg-devel
 BuildRequires:	libtool
+BuildRequires:	pkgconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
