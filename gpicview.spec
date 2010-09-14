@@ -19,8 +19,12 @@ BuildRequires:	pkgconfig
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
-GPicView is the standard picture viewer of LXDE. GPicView features
-lightening fast startup and intuitive interface.
+GPicView is the standard picture viewer of LXDE.
+
+Features:
+- Extremely lightweight and fast with low memory usage
+- Very suitable for default image viewer of desktop system
+- Simple and intuitive interface
 
 %prep
 %setup -q
