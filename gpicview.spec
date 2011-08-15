@@ -1,17 +1,27 @@
+#
+# Conditional build:
+%bcond_with		gtk3		# build GTK+3 disables GTK+2
+%bcond_without		gtk2	# build with GTK+2
+
+%if %{with gtk3}
+%undefine	with_gtk2
+%endif
+
 Summary:	GPicView: Picture viewer of LXDE
 Name:		gpicview
-Version:	0.2.1
+Version:	0.2.2
 Release:	1
 License:	GPL v2, LGPL
 Group:		X11/Applications
-Source0:	https://downloads.sourceforge.net/project/lxde/GPicView%20%28image%20Viewer%29/GPicView%20%{version}/%{name}-%{version}.tar.gz
-# Source0-md5:	a2de255bf9bdc40746c0dc89b3454a10
+Source0:	http://downloads.sourceforge.net/lxde/%{name}-%{version}.tar.gz
+# Source0-md5:	943da9f4a23541accd5acdd4fb69966f
 URL:		http://wiki.lxde.org/en/GPicView
 BuildRequires:	autoconf
 BuildRequires:	automake
 BuildRequires:	gettext-devel
 BuildRequires:	glib2-devel
-BuildRequires:	gtk+2-devel
+%{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.12.0}
+%{?with_gtk3:BuildRequires:	gtk+3-devel}
 BuildRequires:	intltool
 BuildRequires:	libjpeg-devel
 BuildRequires:	libtool
@@ -35,7 +45,8 @@ Features:
 %{__autoheader}
 %{__autoconf}
 %{__intltoolize}
-%configure
+%configure \
+	%{?with_gtk3:--enable-gtk3}
 %{__make}
 
 %install
@@ -44,7 +55,7 @@ rm -rf $RPM_BUILD_ROOT
 	DESTDIR=$RPM_BUILD_ROOT
 
 # missing in glibc
-rm -rf $RPM_BUILD_ROOT%{_datadir}/locale/ur_PK
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/ur_PK
 
 %find_lang %{name}
 
