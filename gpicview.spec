@@ -1,32 +1,34 @@
 #
 # Conditional build:
-%bcond_with		gtk3		# build GTK+3 disables GTK+2
-%bcond_without		gtk2	# build with GTK+2
-
-%if %{with gtk3}
-%undefine	with_gtk2
-%endif
+%bcond_with	gtk3	# use GTK+3 instead of GTK+2
 
 Summary:	GPicView: Picture viewer of LXDE
+Summary(pl.UTF-8):	GPicView - przeglądarka obrazków dla LXDE
 Name:		gpicview
-Version:	0.2.4
+Version:	0.2.5
 Release:	1
-License:	GPL v2, LGPL
+License:	GPL v2+
 Group:		X11/Applications
-Source0:	http://downloads.sourceforge.net/lxde/%{name}-%{version}.tar.gz
-# Source0-md5:	b209e36531f89c48e3067b389699d4c7
-URL:		http://wiki.lxde.org/en/GPicView
-BuildRequires:	autoconf
-BuildRequires:	automake
+Source0:	https://downloads.sourceforge.net/lxde/%{name}-%{version}.tar.xz
+# Source0-md5:	26be9b0c5a234f1afe7d83d02a4a33f4
+URL:		https://lxde.sourceforge.net/gpicview/
+BuildRequires:	autoconf >= 2.50
+BuildRequires:	automake >= 1:1.11
 BuildRequires:	gettext-tools
-BuildRequires:	glib2-devel
-%{?with_gtk2:BuildRequires:	gtk+2-devel >= 2:2.12.0}
-%{?with_gtk3:BuildRequires:	gtk+3-devel}
-BuildRequires:	intltool
+BuildRequires:	glib2-devel >= 2.0
+%{!?with_gtk3:BuildRequires:	gtk+2-devel >= 2:2.12.0}
+%{?with_gtk3:BuildRequires:	gtk+3-devel >= 3.0.0}
+BuildRequires:	intltool >= 0.40.0
 BuildRequires:	libjpeg-devel
-BuildRequires:	libtool
+BuildRequires:	libtool >= 2:2
 BuildRequires:	pkgconfig
-Requires:	desktop-file-utils
+BuildRequires:	tar >= 1:1.22
+BuildRequires:	xorg-lib-libX11-devel
+BuildRequires:	xz
+Requires(post,postun):	desktop-file-utils
+Requires(post,postun):	gtk-update-icon-cache
+%{!?with_gtk3:Requires:	gtk+2 >= 2:2.12.0}
+Requires:	hicolor-icon-theme
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %description
@@ -37,26 +39,40 @@ Features:
 - Very suitable for default image viewer of desktop system
 - Simple and intuitive interface
 
+%description -l pl.UTF-8
+GPicView to standardowa przeglądarka obrazków środowiska LXDE.
+
+Cechy:
+- bardzo lekka, szybka, z małym zużyciem pamięci
+- nadająca się jako domyślna przeglądardka obrazków środowiska
+  graficznego
+- prosty i intuicyjny interfejs
+
 %prep
 %setup -q
 
 %build
 %{__libtoolize}
-%{__aclocal}
-%{__autoheader}
-%{__autoconf}
 %{__intltoolize}
+%{__aclocal} -I m4
+%{__autoconf}
+%{__autoheader}
+%{__automake}
 %configure \
-	%{?with_gtk3:--enable-gtk3}
-%{__make} V=1
+	%{?with_gtk3:--enable-gtk3} \
+	--disable-silent-rules
+%{__make}
 
 %install
 rm -rf $RPM_BUILD_ROOT
+
 %{__make} install \
 	DESTDIR=$RPM_BUILD_ROOT
 
-# missing in glibc
-%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/{frp,ur_PK}
+# unify names
+%{__mv} $RPM_BUILD_ROOT%{_datadir}/locale/{tt_RU,tt}
+# just a copy of ur
+%{__rm} -r $RPM_BUILD_ROOT%{_datadir}/locale/ur_PK
 
 %find_lang %{name}
 
@@ -65,12 +81,15 @@ rm -rf $RPM_BUILD_ROOT
 
 %post
 %update_desktop_database
+%update_icon_cache hicolor
+
+%postun
+%update_desktop_database
+%update_icon_cache hicolor
 
 %files -f %{name}.lang
 %defattr(644,root,root,755)
-%attr(755,root,root) %{_bindir}/%{name}
-%{_desktopdir}/%{name}.desktop
-%dir %{_datadir}/%{name}
-%{_datadir}/%{name}/pixmaps
-%{_datadir}/%{name}/ui
-%{_iconsdir}/*/*/apps/*.png
+%attr(755,root,root) %{_bindir}/gpicview
+%{_datadir}/gpicview
+%{_desktopdir}/gpicview.desktop
+%{_iconsdir}/hicolor/48x48/apps/gpicview.png
